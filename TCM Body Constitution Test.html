@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>中医体质辨识自测</title>
+    <style>
+        /* --- Coffee / Aura Style Theme --- */
+        :root {
+            --bg-body: #F9F7F2; /* 暖米色背景 */
+            --bg-card: #FFFFFF;
+            --primary: #BC8F58; /* 拿铁金/咖啡色 */
+            --primary-dark: #8C6A40;
+            --text-main: #2C2622; /* 深褐/黑色 */
+            --text-secondary: #7A726A;
+            --accent-green: #6B8E23; /* 抹茶绿 (用于平和/健康) */
+            --accent-red: #D9534F; /* 警示红 */
+            
+            --font-serif: "Palatino Linotype", "Book Antiqua", Palatino, serif; /* 衬线体 */
+            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            
+            --radius-card: 24px;
+            --radius-btn: 12px;
+            --shadow-soft: 0 10px 40px rgba(188, 143, 88, 0.1);
+            --shadow-hover: 0 15px 50px rgba(188, 143, 88, 0.2);
+            
+            --transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            outline: none; /* 去除默认黑框 */
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-sans);
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        button:focus {
+            outline: none; /* 再次确保去除黑框 */
+        }
+
+        /* Container */
+        .app-container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px 24px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Typography & Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+        }
+
+        .brand {
+            font-family: var(--font-serif);
+            font-weight: 700;
+            font-size: 24px;
+            color: var(--text-main);
+            letter-spacing: 0.5px;
+        }
+
+        .link-btn {
+            background: transparent;
+            border: none;
+            color: var(--primary);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .link-btn:hover { background: rgba(188, 143, 88, 0.1); }
+
+        h1.hero-title {
+            font-family: var(--font-serif);
+            font-size: 42px;
+            line-height: 1.2;
+            margin-bottom: 16px;
+            color: var(--text-main);
+        }
+
+        p.hero-desc {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            max-width: 500px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-card);
+            padding: 32px;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 24px;
+            border: 1px solid rgba(0,0,0,0.02);
+            transition: transform 0.3s ease;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: var(--radius-btn);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(188, 143, 88, 0.3);
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn:active { transform: scale(0.98); }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #E0E0E0;
+            color: var(--text-secondary);
+            box-shadow: none;
+        }
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: transparent;
+        }
+
+        .btn-text-back {
+            background: transparent;
+            color: var(--text-secondary);
+            box-shadow: none;
+            padding: 0;
+            width: auto;
+            justify-content: flex-start;
+        }
+        .btn-text-back:hover { background: transparent; color: var(--text-main); box-shadow: none; transform: none; }
+
+        /* Gender Selection */
+        .gender-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 24px 0;
+        }
+
+        .gender-option {
+            padding: 16px 10px;
+            border-radius: 16px;
+            background: #F5F5F5;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .gender-option.selected {
+            background: #FFFBF5;
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 4px 12px rgba(188, 143, 88, 0.15);
+        }
+
+        /* Custom Slider (Smooth & Animated) */
+        .slider-wrapper {
+            padding: 20px 0 10px;
+            position: relative;
+            user-select: none;
+        }
+
+        .slider-track-bg {
+            height: 6px;
+            background: #EAEAEA;
+            border-radius: 10px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        /* The thumb */
+        .slider-thumb {
+            width: 28px;
+            height: 28px;
+            background: white;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            cursor: grab;
+            transition: left 0.4s cubic-bezier(0.25, 1, 0.5, 1), transform 0.2s;
+            z-index: 2;
+        }
+        .slider-thumb.dragging { transition: none; cursor: grabbing; transform: translate(-50%, -50%) scale(1.1); }
+        .slider-thumb.active { background: var(--primary); }
+
+        /* Ticks */
+        .slider-ticks {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+        .tick {
+            width: 6px;
+            height: 6px;
+            background: #D1D1D1;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+
+        .slider-labels-top {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .slider-labels-top span:first-child { color: var(--accent-red); } /* 总是 */
+        .slider-labels-top span:last-child { color: var(--accent-green); } /* 没有 */
+
+        .current-val-display {
+            text-align: center;
+            height: 24px;
+            margin-top: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--primary);
+            opacity: 0;
+            transform: translateY(5px);
+            transition: all 0.3s;
+        }
+        .current-val-display.show { opacity: 1; transform: translateY(0); }
+
+        /* Quiz Layout */
+        .question-card {
+            border-left: 4px solid transparent;
+            animation: slideUp 0.4s ease-out backwards;
+        }
+        .question-card.active-card {
+            border-left-color: var(--primary);
+        }
+        .question-card.error {
+            border-color: var(--accent-red);
+            animation: shake 0.4s;
+        }
+
+        .q-number {
+            font-family: var(--font-serif);
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .q-text {
+            font-size: 19px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            line-height: 1.5;
+            color: var(--text-main);
+        }
+
+        /* Results */
+        .result-hero {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .result-badge {
+            display: inline-block;
+            background: #FFF8E1;
+            color: var(--primary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: 1px;
+        }
+
+        .main-type {
+            font-family: var(--font-serif);
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0 0 10px 0;
+        }
+
+        .sub-type {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+
+        /* Chart */
+        .bar-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .bar-label { width: 70px; font-size: 14px; font-weight: 600; color: var(--text-secondary); }
+        .bar-track { flex: 1; height: 10px; background: #F0F0F0; border-radius: 5px; overflow: hidden; margin: 0 12px; }
+        .bar-fill { height: 100%; background: #DDD; border-radius: 5px; width: 0; transition: width 1s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .bar-val { width: 35px; text-align: right; font-size: 13px; color: #999; }
+
+        .bar-fill.high { background: var(--accent-red); } /* ≥40 */
+        .bar-fill.mid { background: var(--primary); } /* 30-39 */
+        .bar-fill.health { background: var(--accent-green); } /* 平和 */
+
+        /* Advice Section */
+        .advice-section {
+            background: #FAF9F6;
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 20px;
+        }
+        .advice-item {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .advice-item:last-child { border: none; margin: 0; padding: 0; }
+        .advice-title { font-weight: 700; color: var(--text-main); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;}
+
+        /* Modals */
+        .modal-wrap {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(44, 38, 34, 0.4);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        .modal-wrap.active { opacity: 1; pointer-events: auto; }
+        
+        .modal-box {
+            background: white;
+            width: 90%; max-width: 500px;
+            max-height: 85vh;
+            overflow-y: auto;
+            border-radius: 24px;
+            padding: 32px;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        .modal-wrap.active .modal-box { transform: translateY(0); }
+
+        /* Animations */
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+        .hidden { display: none !important; }
+
+        @media (max-width: 600px) {
+            h1.hero-title { font-size: 32px; }
+            .card { padding: 24px 20px; }
+            .gender-options { gap: 8px; }
+            .gender-option { font-size: 13px; padding: 12px 4px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    
+    <!-- Top Nav -->
+    <header>
+        <div class="brand">TCM Body Check</div>
+        <button class="link-btn" onclick="showInfoModal()">什么是体质?</button>
+    </header>
+
+    <!-- 1. Landing View -->
+    <div id="view-landing">
+        <div style="padding: 20px 0;">
+            <p style="color: var(--primary); font-weight: 700; letter-spacing: 1px; font-size: 14px; text-transform: uppercase;">Ancient Wisdom · Modern Insight</p>
+            <h1 class="hero-title">探索你的身体<br>属于哪种自然属性</h1>
+            <p class="hero-desc">源自中华中医药学会标准，60道专业自测题，为您解码身体的寒热虚实，提供个性化养生建议。</p>
+        </div>
+
+        <div class="card">
+            <h3 style="margin-top:0; font-family: var(--font-serif);">开始前的准备</h3>
+            <p style="font-size:14px; color:#666;">为了提供更精准的题目，请选择您的性别（部分题目存在生理差异）：</p>
+            
+            <div class="gender-options">
+                <div class="gender-option" onclick="setGender('male', this)">男性 🙋‍♂️</div>
+                <div class="gender-option" onclick="setGender('female', this)">女性 🙋‍♀️</div>
+                <div class="gender-option selected" onclick="setGender('undisclosed', this)">不便透露 🤐</div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <button class="btn" onclick="startQuiz()">开始测试</button>
+            </div>
+            <p style="font-size:12px; color:#aaa; margin-top:16px; text-align:center;">离线运行 • 隐私安全 • 不上传任何数据</p>
+        </div>
+    </div>
+
+    <!-- 2. Quiz View -->
+    <div id="view-quiz" class="hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <button class="btn-text-back" onclick="confirmExit()">← 退出</button>
+            <div style="font-size: 14px; color: var(--text-secondary); font-weight: 600;">进度 <span id="progress-text">1/7</span></div>
+        </div>
+        
+        <!-- Progress Bar Line -->
+        <div style="height: 4px; background: #E0E0E0; border-radius: 2px; margin-bottom: 30px; overflow: hidden;">
+            <div id="progress-fill" style="height: 100%; width: 0%; background: var(--primary); transition: width 0.4s;"></div>
+        </div>
+
+        <div id="question-list">
+            <!-- Questions Injected Here -->
+        </div>
+
+        <div style="display: flex; gap: 16px; margin-top: 40px; padding-bottom: 40px;">
+            <button id="btn-prev" class="btn btn-outline" style="flex:1" onclick="navPage(-1)">上一页</button>
+            <button id="btn-next" class="btn" style="flex:2" onclick="navPage(1)">下一页</button>
+        </div>
+    </div>
+
+    <!-- 3. Result View -->
+    <div id="view-result" class="hidden">
+        <div class="card result-hero">
+            <div class="result-badge">✨ 测评报告已生成</div>
+            <h1 class="main-type" id="res-main-title">平和质</h1>
+            <p class="sub-type" id="res-sub-desc">阴阳平衡，脏腑协调，气血充足。</p>
+            
+            <div id="res-tags" style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:10px;">
+                <!-- Tags like "兼有湿热", "倾向气虚" -->
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 style="font-family: var(--font-serif); border-bottom: 1px solid #eee; padding-bottom: 12px; margin-bottom: 20px;">体质雷达图</h3>
+            <div id="chart-container">
+                <!-- Bars -->
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 style="font-family: var(--font-serif);">调理建议 & 生活指南 🍵</h3>
+            <div id="advice-list" class="advice-section">
+                <!-- Advice Content -->
+            </div>
+            <div style="font-size:12px; color:#999; margin-top:20px; line-height:1.5;">
+                免责声明：本测试结果仅供健康管理参考，不作为医疗诊断依据。如有明显不适，请前往正规医院就诊。
+            </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 16px; padding-bottom: 40px; align-items: center;">
+            <button class="btn" onclick="reviewAnswers()">✍️ 返回修改 / 查看题目</button>
+            <button class="btn btn-outline" onclick="resetApp()">🔄 重新测试 (清空)</button>
+        </div>
+    </div>
+
+</div>
+
+<!-- Info Modal -->
+<div id="modal-info" class="modal-wrap">
+    <div class="modal-box">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2 style="margin:0; font-family:var(--font-serif);">关于中医九种体质</h2>
+            <button onclick="closeModal('modal-info')" style="background:none; border:none; font-size:24px; color:#999; cursor:pointer;">&times;</button>
+        </div>
+        <div style="font-size: 15px; color: var(--text-secondary); line-height: 1.7;">
+            <p><strong>🍃 平和质 (Type A)</strong><br>最理想的体质。体形匀称，健壮，面色红润，精力充沛。对外界环境适应能力强。</p>
+            <p><strong>❄️ 阳虚质 (Type B)</strong><br>怕冷派。手脚发凉，胃脘部、背部或腰膝部怕冷，衣服比别人穿得多。性格多沉静、内向。</p>
+            <p><strong>🔥 阴虚质 (Type C)</strong><br>缺水派。手心脚心发热，口干咽燥，面部潮红，容易便秘。性格多急躁、外向。</p>
+            <p><strong>☁️ 气虚质 (Type D)</strong><br>气短派。说话声音低弱，容易疲乏，气短，易出汗。性格内向，情绪不稳定。</p>
+            <p><strong>💧 痰湿质 (Type E)</strong><br>体胖派。腹部肥满，松软，面部皮肤油脂较多。性格偏温和、稳重。</p>
+            <p><strong>🌋 湿热质 (Type F)</strong><br>长痘派。面垢油光，易生痤疮，口苦口干，身重困倦。性格多急躁易怒。</p>
+            <p><strong>🌑 血瘀质 (Type G)</strong><br>长斑派。面色晦暗，色素沉着，容易出现瘀斑，口唇黯淡。性格易烦，健忘。</p>
+            <p><strong>🌀 气郁质 (Type H)</strong><br>郁闷派。神情抑郁，情感脆弱，烦闷不乐。多愁善感，容易失眠。</p>
+            <p><strong>🤧 特禀质 (Type I)</strong><br>过敏派。容易过敏（药物、食物、花粉），打喷嚏，流鼻涕。适应能力差。</p>
+        </div>
+    </div>
+</div>
+
+<!-- Alert Modal -->
+<div id="modal-alert" class="modal-wrap">
+    <div class="modal-box" style="text-align:center; max-width:320px;">
+        <h3 id="alert-title" style="margin-top:0">提示</h3>
+        <p id="alert-msg" style="color:#666; margin-bottom:24px;">内容</p>
+        <button class="btn" onclick="closeModal('modal-alert')">知道了</button>
+    </div>
+</div>
+
+<script>
+/**
+ * ------------------------------------------------------------------
+ * Data Layer (Standard TCM Questions)
+ * ------------------------------------------------------------------
+ */
+const TYPES = {
+    A: { name: '阳虚质', desc: '阳气不足，以畏寒怕冷、手足不温等虚寒表现为主要特征。', emoji: '❄️' },
+    B: { name: '阴虚质', desc: '阴液亏少，以口燥咽干、手足心热等虚热表现为主要特征。', emoji: '🔥' },
+    C: { name: '气虚质', desc: '元气不足，以疲乏、气短、自汗等气虚表现为主要特征。', emoji: '☁️' },
+    D: { name: '痰湿质', desc: '痰湿凝聚，以形体肥胖、腹部肥满、口黏苔腻等痰湿表现为主要特征。', emoji: '💧' },
+    E: { name: '湿热质', desc: '湿热内蕴，以面垢油光、口苦、苔黄腻等湿热表现为主要特征。', emoji: '🌋' },
+    F: { name: '血瘀质', desc: '血行不畅，以肤色晦黯、舌质紫黯等血瘀表现为主要特征。', emoji: '🌑' },
+    G: { name: '气郁质', desc: '气机郁滞，以神情抑郁、忧虑脆弱等气郁表现为主要特征。', emoji: '🌀' },
+    H: { name: '特禀质', desc: '先天失常，以生理缺陷、过敏反应等为主要特征。', emoji: '🤧' },
+    I: { name: '平和质', desc: '阴阳气血调和，以体态适中、面色红润、精力充沛等为主要特征。', emoji: '🍃' }
+};
+
+// Complete 60+ Question Bank
+// reverse: true means answer 1=1pt, 5=5pt. Default is 1=5pt, 5=1pt (since 1 is "Always" which is bad for health usually)
+const QUESTIONS = [
+    // 阳虚 (A)
+    { id: 1, text: "您手脚发凉吗？", type: 'A' },
+    { id: 2, text: "您胃脘部、背部或腰膝部怕冷吗？", type: 'A' },
+    { id: 3, text: "您感到怕冷、衣服比别人穿得多吗？", type: 'A' },
+    { id: 4, text: "您比一般人不了寒冷（冬天的寒冷，夏天的冷空调、电扇等）吗？", type: 'A' },
+    { id: 5, text: "您比别人容易患感冒吗？", type: 'A' },
+    { id: 6, text: "您吃(喝)凉的东西会感到不舒服或者怕吃(喝)凉的东西吗？", type: 'A' },
+    { id: 7, text: "您受凉或吃(喝)凉的东西后，容易腹泻(拉肚子)吗？", type: 'A' },
+    // 阴虚 (B)
+    { id: 8, text: "您感到手脚心发热吗？", type: 'B' },
+    { id: 9, text: "您感觉身体、脸上发热吗？", type: 'B' },
+    { id: 10, text: "您皮肤或口唇干吗？", type: 'B' },
+    { id: 11, text: "您口唇的颜色比一般人红吗？", type: 'B' },
+    { id: 12, text: "您容易便秘或大便干燥吗？", type: 'B' },
+    { id: 13, text: "您面部两颧潮红或偏红吗？", type: 'B' },
+    { id: 14, text: "您感到眼睛干涩吗？", type: 'B' },
+    { id: 15, text: "您感到口干咽燥、总想喝水吗？", type: 'B' },
+    // 气虚 (C)
+    { id: 16, text: "您容易疲乏吗？", type: 'C' },
+    { id: 17, text: "您容易气短(呼吸短促，接不上气)吗？", type: 'C' },
+    { id: 18, text: "您容易心慌吗？", type: 'C' },
+    { id: 19, text: "您容易头晕或站起时晕眩吗？", type: 'C' },
+    { id: 20, text: "您比别人容易患感冒吗？", type: 'C' },
+    { id: 21, text: "您喜欢安静、懒得说话吗？", type: 'C' },
+    { id: 22, text: "您说话声音低弱无力吗？", type: 'C' },
+    { id: 23, text: "您活动量稍大就容易出虚汗吗？", type: 'C' },
+    // 痰湿 (D)
+    { id: 24, text: "您感到胸闷或腹部胀满吗？", type: 'D' },
+    { id: 25, text: "您感到身体沉重不轻松或不爽快吗？", type: 'D' },
+    { id: 26, text: "您腹部肥满松软吗？", type: 'D' },
+    { id: 27, text: "您有额部油脂分泌多的现象吗？", type: 'D' },
+    { id: 28, text: "您上眼睑比别人肿(上眼睑有轻微隆起的现象)吗？", type: 'D' },
+    { id: 29, text: "您嘴里有黏黏的感觉吗？", type: 'D' },
+    { id: 30, text: "您平时痰多，特别是咽喉部总感到有痰堵着吗？", type: 'D' },
+    { id: 31, text: "您舌苔厚腻或有舌苔厚厚的感觉吗？", type: 'D' },
+    // 湿热 (E)
+    { id: 32, text: "您面部或鼻部有油腻感或者油亮发光吗？", type: 'E' },
+    { id: 33, text: "您容易生痤疮或疮疖吗？", type: 'E' },
+    { id: 34, text: "您感到口苦或嘴里有异味吗？", type: 'E' },
+    { id: 35, text: "您大便黏滞不爽、有解不尽的感觉吗？", type: 'E' },
+    { id: 36, text: "您小便时尿道有发热感、尿色浓(深)吗？", type: 'E' },
+    { id: 37, text: "您带下色黄(白带颜色发黄)吗？(限女性)", type: 'E', gender: 'female' },
+    { id: 38, text: "您的阴囊潮湿吗？(限男性)", type: 'E', gender: 'male' },
+    // 血瘀 (F)
+    { id: 39, text: "您的皮肤在不知不觉中会出现青紫瘀斑(皮下出血)吗？", type: 'F' },
+    { id: 40, text: "您两颧部有细微红丝吗？", type: 'F' },
+    { id: 41, text: "您身体上有哪里疼痛吗？", type: 'F' },
+    { id: 42, text: "您面色晦暗或容易出现褐斑吗？", type: 'F' },
+    { id: 43, text: "您容易有黑眼圈吗？", type: 'F' },
+    { id: 44, text: "您容易忘事(健忘)吗？", type: 'F' },
+    { id: 45, text: "您口唇颜色偏黯吗？", type: 'F' },
+    // 气郁 (G)
+    { id: 46, text: "您感到闷闷不乐、情绪低沉吗？", type: 'G' },
+    { id: 47, text: "您容易精神紧张、焦虑不安吗？", type: 'G' },
+    { id: 48, text: "您多愁善感、感情脆弱吗？", type: 'G' },
+    { id: 49, text: "您容易感到害怕或受到惊吓吗？", type: 'G' },
+    { id: 50, text: "您胁肋部或乳房胀痛吗？", type: 'G' },
+    { id: 51, text: "您无缘无故叹气吗？", type: 'G' },
+    { id: 52, text: "您咽喉部有异物感，且吐之不出、咽之不下吗？", type: 'G' },
+    // 特禀 (H)
+    { id: 53, text: "您没有感冒时也会打喷嚏吗？", type: 'H' },
+    { id: 54, text: "您没有感冒时也会流鼻涕吗？", type: 'H' },
+    { id: 55, text: "您有因季节变化、温度变化或异味等原因而咳喘的现象吗？", type: 'H' },
+    { id: 56, text: "您容易过敏(对药物、食物、气味、花粉或在季节交替、气候变化时)吗？", type: 'H' },
+    { id: 57, text: "您的皮肤容易起荨麻疹(风团、风疹块、风疙瘩)吗？", type: 'H' },
+    { id: 58, text: "您的皮肤因过敏出现过紫癜(紫红色出血点、瘀斑)吗？", type: 'H' },
+    { id: 59, text: "您的皮肤一抓就红，并出现抓痕吗？", type: 'H' },
+    // 平和 (I) - * 注意：这些是反向题，即“好”的现象
+    // 规则：平和质题目原始分为1-5。计算转化分时，需要根据实际含义反转。
+    // 这里我们标记 reverse:true 表示“得分直接用原始分”（如果1=总是，那么总是精力充沛=1分？不对）
+    // 让我们理清：平和质题目是“精力充沛”、“适应能力强”。
+    // 滑块：左(1)=总是，右(5)=没有。
+    // 问卷原意：1=没有，5=总是。
+    // 对于“精力充沛”：选“总是”应该是好的。
+    // 平和质计算公式：（原始分-条目数）/...
+    // 平和质的标准是得分越高越平和。所以“总是精力充沛”应该得5分。
+    // 我们的滑块 Left=1(总是)。所以对平和质正向题，Score = 6 - Val (Left 1 -> Score 5).
+    // 但是！图片里有5个带*的题：疲乏、声音低弱、情绪低沉、怕冷。这些是负向题。
+    // 负向题：选“总是”（1）说明不平和，应该得1分。
+    // 所以：
+    // 正向题（精力充沛）：Left(1) -> Score 5. Formula: 6 - Val.
+    // 负向题（容易疲乏）：Left(1) -> Score 1. Formula: Val.
+    { id: 60, text: "您精力充沛吗？", type: 'I', isPositivePingHe: true }, 
+    { id: 61, text: "您容易疲乏吗？*", type: 'I', isNegativePingHe: true },
+    { id: 62, text: "您说话声音低弱无力吗？*", type: 'I', isNegativePingHe: true },
+    { id: 63, text: "您感到闷闷不乐、情绪低沉吗？*", type: 'I', isNegativePingHe: true },
+    { id: 64, text: "您比一般人不了寒冷吗？*", type: 'I', isNegativePingHe: true },
+    { id: 65, text: "您能适应外界自然和社会环境的变化吗？", type: 'I', isPositivePingHe: true }
+];
+
+/**
+ * ------------------------------------------------------------------
+ * Logic & State
+ * ------------------------------------------------------------------
+ */
+const state = {
+    gender: 'undisclosed',
+    answers: {}, // map qId -> value (1..5)
+    page: 0,
+    perPage: 8,
+    filteredQ: [],
+    history: [] // To modify answers if needed
+};
+
+// Initialization
+function setGender(g, el) {
+    state.gender = g;
+    document.querySelectorAll('.gender-option').forEach(d => d.classList.remove('selected'));
+    el.classList.add('selected');
+}
+
+function startQuiz() {
+    // 1. Filter Questions
+    state.filteredQ = QUESTIONS.filter(q => {
+        if (!q.gender) return true;
+        if (state.gender === 'undisclosed') return false; // Skip gender specific if undisclosed
+        return q.gender === state.gender;
+    });
+
+    // 2. Initialize Answers (0 = unanswered)
+    // If restarting, check if we have data to keep? No, startQuiz implies fresh start usually.
+    // But if "Reviewing", we don't call startQuiz.
+    if (Object.keys(state.answers).length === 0) {
+        state.filteredQ.forEach(q => state.answers[q.id] = 0);
+    }
+
+    state.page = 0;
+    switchView('view-quiz');
+    renderPage();
+}
+
+function renderPage() {
+    const start = state.page * state.perPage;
+    const end = start + state.perPage;
+    const currentQ = state.filteredQ.slice(start, end);
+    const totalPages = Math.ceil(state.filteredQ.length / state.perPage);
+
+    // Update Progress
+    const progText = document.getElementById('progress-text');
+    const progFill = document.getElementById('progress-fill');
+    progText.textContent = `${state.page + 1}/${totalPages}`;
+    progFill.style.width = `${((state.page + 1) / totalPages) * 100}%`;
+
+    // Render Cards
+    const container = document.getElementById('question-list');
+    container.innerHTML = '';
+    
+    currentQ.forEach((q, idx) => {
+        const val = state.answers[q.id];
+        const globalIdx = start + idx + 1;
+        
+        const el = document.createElement('div');
+        el.className = 'card question-card';
+        if (val > 0) el.classList.add('active-card');
+        el.id = `q-card-${q.id}`;
+        
+        el.innerHTML = `
+            <div class="q-number">Question ${globalIdx}</div>
+            <div class="q-text">${q.text}</div>
+            
+            <div class="slider-wrapper" id="slider-wrapper-${q.id}">
+                <div class="slider-labels-top">
+                    <span>总是/非常 (Always)</span>
+                    <span>没有/根本不 (Never)</span>
+                </div>
+                
+                <!-- Custom Slider DOM -->
+                <div class="slider-track-bg" onclick="handleSliderClick(event, ${q.id})">
+                    <div class="slider-ticks">
+                        <div class="tick" style="left:0%"></div>
+                        <div class="tick" style="left:25%"></div>
+                        <div class="tick" style="left:50%"></div>
+                        <div class="tick" style="left:75%"></div>
+                        <div class="tick" style="left:100%"></div>
+                    </div>
+                    <div class="slider-thumb ${val > 0 ? '' : 'hidden'}" id="thumb-${q.id}"
+                         onmousedown="startDrag(event, ${q.id})"
+                         ontouchstart="startDrag(event, ${q.id})"
+                    ></div>
+                </div>
+
+                <div class="current-val-display ${val > 0 ? 'show' : ''}" id="val-disp-${q.id}">
+                    ${getLabel(val)}
+                </div>
+            </div>
+        `;
+        container.appendChild(el);
+        
+        // Position thumb if value exists
+        if (val > 0) {
+            setTimeout(() => moveThumbVisual(q.id, val), 0);
+        }
+    });
+
+    // Buttons
+    const prevBtn = document.getElementById('btn-prev');
+    const nextBtn = document.getElementById('btn-next');
+    
+    prevBtn.style.visibility = state.page === 0 ? 'hidden' : 'visible';
+    
+    if (state.page === totalPages - 1) {
+        nextBtn.textContent = '提交测试 (Submit)';
+        nextBtn.onclick = submitQuiz;
+        nextBtn.style.backgroundColor = 'var(--primary-dark)';
+    } else {
+        nextBtn.textContent = '下一页 (Next)';
+        nextBtn.onclick = () => navPage(1);
+        nextBtn.style.backgroundColor = 'var(--primary)';
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* --- Advanced Slider Logic --- */
+
+function getLabel(val) {
+    const map = {
+        1: "总是 (Always) 🔥",
+        2: "经常 (Often) 😣",
+        3: "有时 (Sometimes) 😐",
+        4: "很少 (Rarely) 🙂",
+        5: "没有 (Never) 🧊"
+    };
+    return map[val] || "";
+}
+
+function handleSliderClick(e, qId) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const width = rect.width;
+    let pct = x / width;
+    if(pct < 0) pct = 0; if(pct > 1) pct = 1;
+    
+    // Convert to 1..5
+    // 0% = 1, 100% = 5
+    // Steps: 0, 0.25, 0.5, 0.75, 1.0
+    const rawStep = Math.round(pct * 4); // 0..4
+    const val = rawStep + 1; // 1..5
+    
+    setAnswer(qId, val);
+}
+
+function setAnswer(qId, val) {
+    state.answers[qId] = val;
+    
+    // UI Updates
+    moveThumbVisual(qId, val);
+    
+    // Show Text
+    const disp = document.getElementById(`val-disp-${qId}`);
+    if (disp) {
+        disp.textContent = getLabel(val);
+        disp.classList.add('show');
+    }
+    
+    // Card Style
+    const card = document.getElementById(`q-card-${qId}`);
+    if (card) {
+        card.classList.add('active-card');
+        card.classList.remove('error');
+    }
+}
+
+function moveThumbVisual(qId, val) {
+    const thumb = document.getElementById(`thumb-${qId}`);
+    if (!thumb) return;
+    
+    thumb.classList.remove('hidden');
+    // val 1..5 => 0%..100%
+    const pct = (val - 1) * 25;
+    thumb.style.left = `${pct}%`;
+}
+
+// Drag Logic
+let draggingId = null;
+function startDrag(e, qId) {
+    draggingId = qId;
+    const thumb = document.getElementById(`thumb-${qId}`);
+    thumb.classList.add('dragging');
+    thumb.classList.add('active');
+    
+    // Add global listeners
+    document.addEventListener('mousemove', onDrag);
+    document.addEventListener('mouseup', endDrag);
+    document.addEventListener('touchmove', onDrag, {passive: false});
+    document.addEventListener('touchend', endDrag);
+}
+
+function onDrag(e) {
+    if (!draggingId) return;
+    e.preventDefault(); // prevent scroll on touch
+    
+    const wrapper = document.getElementById(`slider-wrapper-${draggingId}`);
+    const track = wrapper.querySelector('.slider-track-bg');
+    const rect = track.getBoundingClientRect();
+    
+    const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+    let x = clientX - rect.left;
+    let width = rect.width;
+    
+    let pct = x / width;
+    if (pct < 0) pct = 0;
+    if (pct > 1) pct = 1;
+    
+    // Move thumb visually immediately for smooth feel
+    const thumb = document.getElementById(`thumb-${draggingId}`);
+    thumb.style.left = `${pct * 100}%`;
+    
+    // Don't set answer yet, just visual
+}
+
+function endDrag(e) {
+    if (!draggingId) return;
+    
+    const wrapper = document.getElementById(`slider-wrapper-${draggingId}`);
+    const track = wrapper.querySelector('.slider-track-bg');
+    const rect = track.getBoundingClientRect();
+    const thumb = document.getElementById(`thumb-${draggingId}`);
+    
+    // Determine closest snap
+    const currentLeftPct = parseFloat(thumb.style.left); // 0..100
+    const rawStep = Math.round(currentLeftPct / 25);
+    const val = rawStep + 1;
+    
+    setAnswer(draggingId, val); // This snaps it to grid
+    
+    thumb.classList.remove('dragging');
+    thumb.classList.remove('active');
+    draggingId = null;
+    
+    document.removeEventListener('mousemove', onDrag);
+    document.removeEventListener('mouseup', endDrag);
+    document.removeEventListener('touchmove', onDrag);
+    document.removeEventListener('touchend', endDrag);
+}
+
+
+/* --- Navigation & Submission --- */
+
+function navPage(dir) {
+    state.page += dir;
+    renderPage();
+}
+
+function submitQuiz() {
+    // Check missing
+    const missing = state.filteredQ.filter(q => state.answers[q.id] === 0);
+    if (missing.length > 0) {
+        showAlert(`还有 ${missing.length} 道题目未完成，请检查。`);
+        // Jump to page
+        const firstIdx = state.filteredQ.indexOf(missing[0]);
+        const targetPage = Math.floor(firstIdx / state.perPage);
+        state.page = targetPage;
+        renderPage();
+        setTimeout(() => {
+            const card = document.getElementById(`q-card-${missing[0].id}`);
+            if (card) {
+                card.scrollIntoView({behavior:'smooth', block:'center'});
+                card.classList.add('error');
+            }
+        }, 300);
+        return;
+    }
+    
+    calcResult();
+}
+
+function calcResult() {
+    // Score Calculation
+    // Formula: [(Raw - N) / (N*4)] * 100
+    // Raw: sum of points.
+    // Point Logic:
+    // Most Qs: Left(1)=Always -> Score 5. Right(5)=Never -> Score 1. (Score = 6 - Val)
+    // PingHe Positive: Left(1)=Always -> Score 5. (Score = 6 - Val)
+    // PingHe Negative (*): Left(1)=Always -> Score 1. (Score = Val)
+    
+    const scores = {}; // Type -> 0..100
+    
+    Object.keys(TYPES).forEach(t => {
+        const typeQs = state.filteredQ.filter(q => q.type === t);
+        if (typeQs.length === 0) { scores[t] = 0; return; }
+        
+        let rawSum = 0;
+        typeQs.forEach(q => {
+            const val = state.answers[q.id];
+            let point = 0;
+            
+            if (t === 'I') {
+                if (q.isNegativePingHe) point = val; // 1->1
+                else point = 6 - val; // 1->5
+            } else {
+                point = 6 - val; // Pathological types: Always(1) is bad(5 pts)
+            }
+            rawSum += point;
+        });
+        
+        const n = typeQs.length;
+        const finalS = ((rawSum - n) / (n * 4)) * 100;
+        scores[t] = parseFloat(finalS.toFixed(1));
+    });
+
+    // Determination Logic
+    // 1. Pathological Types (A-H) >= 40?
+    // 2. PingHe (I) >= 60 and others < 30(40)?
+    
+    const pathTypes = ['A','B','C','D','E','F','G','H'];
+    const pathScores = pathTypes.map(id => ({ id, score: scores[id], name: TYPES[id].name }));
+    
+    // Sort pathological by score descending
+    pathScores.sort((a,b) => b.score - a.score);
+    
+    const maxPathScore = pathScores[0].score;
+    const pingHeScore = scores['I'];
+    
+    let mainResult = "";
+    let subDesc = "";
+    let tags = [];
+
+    // Core Logic
+    if (pingHeScore >= 60 && maxPathScore < 40) {
+        // PingHe is dominant
+        mainResult = "平和质";
+        subDesc = `恭喜您！您的体质阴阳平衡，脏腑协调。`;
+        tags.push(`健康指数 ${pingHeScore}`);
+        if (maxPathScore >= 30) {
+            pathScores.filter(x => x.score >= 30).forEach(x => tags.push(`倾向${x.name}`));
+        }
+    } else {
+        // Pathological
+        if (maxPathScore >= 40) {
+            // Pick the HIGHEST score as Main
+            const mainTypeObj = pathScores[0];
+            mainResult = mainTypeObj.name;
+            subDesc = `您的体质主要表现为${mainTypeObj.name}特征。`;
+            
+            // Check for others >= 40 (Concurrent)
+            const concurrent = pathScores.filter(x => x.score >= 40 && x.id !== mainTypeObj.id);
+            if (concurrent.length > 0) {
+                subDesc += ` 同时兼有 ${concurrent.map(x=>x.name).join('、')}。`;
+                concurrent.forEach(x => tags.push(`兼有${x.name}`));
+            }
+            
+            // Tendencies
+            const tendency = pathScores.filter(x => x.score >= 30 && x.score < 40);
+            tendency.forEach(x => tags.push(`倾向${x.name}`));
+        } else {
+            // No type >= 40, but PingHe also < 60?
+            // "Undefined" or "Sub-health"
+            mainResult = "亚健康 (偏颇倾向)";
+            subDesc = "您的各项体质得分均未达到明显阈值，但平和质得分也较低，处于调节期。";
+            pathScores.filter(x => x.score >= 30).forEach(x => tags.push(`倾向${x.name}`));
+        }
+    }
+
+    renderResultView(mainResult, subDesc, tags, pathScores, scores);
+}
+
+function renderResultView(main, sub, tags, sortedPath, allScores) {
+    document.getElementById('res-main-title').textContent = main;
+    document.getElementById('res-sub-desc').textContent = sub;
+    
+    const tagContainer = document.getElementById('res-tags');
+    tagContainer.innerHTML = tags.map(t => `<span style="background:rgba(188,143,88,0.1); color:var(--primary-dark); padding:4px 10px; border-radius:8px; font-size:12px;">${t}</span>`).join('');
+    
+    // Chart
+    const chart = document.getElementById('chart-container');
+    chart.innerHTML = '';
+    
+    // Add PingHe first
+    const chartData = [...sortedPath];
+    chartData.unshift({ id: 'I', name: '平和质', score: allScores['I'] }); // Put PingHe at top
+    
+    chartData.forEach(item => {
+        let fillClass = '';
+        if (item.id === 'I') {
+            fillClass = item.score >= 60 ? 'health' : 'mid';
+        } else {
+            if (item.score >= 40) fillClass = 'high';
+            else if (item.score >= 30) fillClass = 'mid';
+            else fillClass = '';
+        }
+        
+        const row = document.createElement('div');
+        row.className = 'bar-row';
+        row.innerHTML = `
+            <div class="bar-label">${TYPES[item.id].emoji} ${item.name}</div>
+            <div class="bar-track">
+                <div class="bar-fill ${fillClass}" style="width:0%" data-w="${item.score}%"></div>
+            </div>
+            <div class="bar-val">${item.score}</div>
+        `;
+        chart.appendChild(row);
+    });
+    
+    // Trigger animation
+    setTimeout(() => {
+        document.querySelectorAll('.bar-fill').forEach(b => b.style.width = b.getAttribute('data-w'));
+    }, 100);
+
+    // Advice
+    const adviceDiv = document.getElementById('advice-list');
+    let adviceHTML = '';
+    
+    // Get top 2 unbalanced
+    const problems = sortedPath.filter(x => x.score >= 30).slice(0, 3);
+    
+    if (problems.length === 0) {
+        adviceHTML = `<div class="advice-item">
+            <div class="advice-title">🍃 保持秘籍</div>
+            <div style="font-size:14px; color:#666;">您的状态非常好！建议继续保持规律作息，饮食多样化，顺应四季变化。</div>
+        </div>`;
+    } else {
+        problems.forEach(p => {
+            const info = TYPES[p.id];
+            adviceHTML += `<div class="advice-item">
+                <div class="advice-title">${info.emoji} 针对${info.name} (${p.score}分)</div>
+                <div style="font-size:14px; color:#666;">${info.desc} 建议咨询专业中医师进行调理，日常注意饮食禁忌。</div>
+            </div>`;
+        });
+    }
+    adviceDiv.innerHTML = adviceHTML;
+
+    switchView('view-result');
+}
+
+function reviewAnswers() {
+    // Go back to quiz view, do not reset data
+    switchView('view-quiz');
+    // Maybe go to first page
+    state.page = 0;
+    renderPage();
+}
+
+function resetApp() {
+    state.answers = {};
+    switchView('view-landing');
+}
+
+function confirmExit() {
+    if(confirm('确定要退出吗？当前进度将丢失。')) {
+        resetApp();
+    }
+}
+
+/* --- Utilities --- */
+function switchView(id) {
+    ['view-landing', 'view-quiz', 'view-result'].forEach(v => document.getElementById(v).classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+    window.scrollTo(0,0);
+}
+
+function showInfoModal() { document.getElementById('modal-info').classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+function showAlert(msg) {
+    document.getElementById('alert-msg').textContent = msg;
+    document.getElementById('modal-alert').classList.add('active');
+}
+
+</script>
+</body>
+</html>
